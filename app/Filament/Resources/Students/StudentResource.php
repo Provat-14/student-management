@@ -45,6 +45,21 @@ class StudentResource extends Resource
             //
         ];
     }
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $user = auth()->user();
+        $query = parent::getEloquentQuery();
+
+        if (! $user->hasRole('super_admin') && $user->student) {
+            return $query->where('department_id', $user->student->department_id)
+                        ->where('semester', $user->student->semester)
+                        ->where('shift', $user->student->shift)
+                        ->where('section', $user->student->section);
+        }
+
+        return $query;
+    }
+    
 
     public static function getPages(): array
     {

@@ -20,7 +20,15 @@ class Student extends Model
         'cgpa',
         'status'
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function isCaptain(): bool
+    {
+        return $this->student_role === 'captain';
+    }
     public function department()
     {
         return $this->belongsTo(\App\Models\Department::class);
