@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Students\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Checkbox;
 
 class StudentForm
 {
@@ -59,7 +58,7 @@ class StudentForm
                 ]),
 
             Select::make('user_id')
-                ->relationship('user', 'name') // User table er shathe link
+                ->relationship('user', 'name') 
                 ->searchable()
                 ->label('Link User Account'),
             TextInput::make('phone_number')->tel(),
