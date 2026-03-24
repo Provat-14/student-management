@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Department;
 
 class Student extends Model
 {
@@ -18,7 +19,8 @@ class Student extends Model
         'email',
         'portfolio',
         'cgpa',
-        'status'
+        'status',
+        'student_role'
     ];
     public function user()
     {
@@ -31,6 +33,6 @@ class Student extends Model
     }
     public function department()
     {
-        return $this->belongsTo(\App\Models\Department::class);
+        return $this->belongsTo(Department::class);
     }
 }
