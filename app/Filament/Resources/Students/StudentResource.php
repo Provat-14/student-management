@@ -15,6 +15,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
 
 class StudentResource extends Resource
 {
@@ -44,6 +46,14 @@ class StudentResource extends Resource
         return [
             //
         ];
+    }
+    public static function canEdit(Model $record): bool
+    {
+        if (auth()->user()->hasRole('captain') && $record->user_id === auth()->id()) {
+            return false;
+        }
+
+        return true;
     }
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {

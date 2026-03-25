@@ -19,48 +19,41 @@ class StudentForm
                 
             TextInput::make('reg_no')
                 ->required(),
-
-            Select::make('semester')
-                ->options([
-                    1 => '1st', 2 => '2nd', 3 => '3rd', 4 => '4th',
-                    5 => '5th', 6 => '6th', 7 => '7th', 8 => '8th',
-                ])
-                ->required()
-                ->native(false),
                 
             Select::make('shift')
-                ->options([
-                    '1' => '1st',
-                    '2' => '2nd',
-                ])
-                ->required()
-                ->native(false),
+                ->options(['1' => '1st', '2' => '2nd'])
+                ->default(fn () => auth()->user()->student?->shift) 
+                ->disabled(fn () => auth()->user()->hasRole('captain'))
+                ->dehydrated()
+                ->required(),
+
+            Select::make('semester')
+                ->options([1 => '1st', 2 => '2nd', 3 => '3rd', 4 => '4th', 5 => '5th', 6 => '6th', 7 => '7th', 8 => '8th'])
+                ->default(fn () => auth()->user()->student?->semester)
+                ->disabled(fn () => auth()->user()->hasRole('captain')) 
+                ->dehydrated(),
 
             Select::make('section')
-                ->options([
-                    'A' => 'A',
-                    'B' => 'B',
-                ])
-                ->required()
-                ->native(false),
+                ->options(['A' => 'A', 'B' => 'B'])
+                ->default(fn () => auth()->user()->student?->section)
+                ->disabled(fn () => auth()->user()->hasRole('captain'))
+                ->dehydrated(),
 
             Select::make('department_id')
-                ->label('Department')
-                ->relationship('department', 'name') 
-                ->searchable()
-                ->preload() 
-                ->required()
-                ->native(false),
+                ->relationship('department', 'name')
+                ->default(fn () => auth()->user()->student?->department_id) 
+                ->disabled(fn () => auth()->user()->hasRole('captain'))
+                ->dehydrated()
+                ->required(),
             Select::make('student_role')
                 ->options([
                     'general' => 'General',
                     'captain' => 'Captain',
-                ]),
-
-            Select::make('user_id')
-                ->relationship('user', 'name') 
-                ->searchable()
-                ->label('Link User Account'),
+                ])
+                ->default('general')
+                ->disabled(fn () => auth()->user()->hasRole('captain'))
+                ->dehydrated()
+                ->required(),
             TextInput::make('phone_number')->tel(),
             TextInput::make('email')->email(),
             TextInput::make('portfolio')->url(),
