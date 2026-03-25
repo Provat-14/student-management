@@ -22,52 +22,10 @@ class StudentObserver
     /**
      * Handle the Student "updated" event.
      */
-    // public function updated(Student $student)
-    // {
-    //     if ($student->wasChanged('student_role') && $student->student_role === 'captain') {
-    //         $deptMap = [
-    //             65 => 'CT',
-    //             67 => 'ET',
-    //             68 => 'ENT',
-    //             70 => 'MT',
-    //             71 => 'PT',
-    //             85 => 'CST',
-    //             86 => 'EMT',
-    //         ];
-
-    //         $deptCode = $student->department->code ?? '';
-    //         $deptShortName = $deptMap[$deptCode] ?? ($student->department->initial ?? 'DEPT');
-            
-    //         $targetUserName = "captain-{$student->semester}/{$student->shift}/{$deptShortName}-{$student->section}";
-            
-    //         $user = User::where('name', $targetUserName)->first();
-
-    //         if ($user) {
-    //             $newPassword = Str::random(10);
-                
-    //             $user->update([
-    //                 'email' => $student->email, 
-    //                 'password' => Hash::make($newPassword),
-    //             ]);
-    //             $user->assignRole('captain'); 
-
-    //             $student->updateQuietly(['user_id' => $user->id]);
-
-    //             $details = [
-    //                 'name' => $student->name,
-    //                 'section' => "{$student->semester}/{$student->shift}/{$student->section}",
-    //                 'email' => $student->email,
-    //                 'password' => $newPassword
-    //             ];
-
-    //             Mail::to($student->email)->send(new CaptainLoginDetails($details));
-    //         }
-    //     }
-    // }
+   
     public function updated(Student $student)
     {
         if ($student->wasChanged('student_role') && $student->student_role === 'captain') {
-            
             Student::where('department_id', $student->department_id)
                 ->where('semester', $student->semester)
                 ->where('shift', $student->shift)
@@ -78,7 +36,6 @@ class StudentObserver
                 ->each(function ($oldCaptain) {
                     $oldCaptain->updateQuietly(['student_role' => 'general']);
                 });
-
             $deptMap = [
                 65 => 'CT',
                 67 => 'ET',
@@ -91,32 +48,31 @@ class StudentObserver
 
             $deptCode = $student->department->code ?? '';
             $deptShortName = $deptMap[$deptCode] ?? ($student->department->initial ?? 'DEPT');
-            
             $targetUserName = "captain-{$student->semester}/{$student->shift}/{$deptShortName}-{$student->section}";
-            
-            $user = User::where('name', $targetUserName)->first();
-
-            if ($user) {
-                $newPassword = Str::random(10);
-                
-                $user->update([
+            $newPassword = Str::random(10);
+            $user = User::firstOrCreate(
+                ['name' => $targetUserName], 
+                [
                     'email' => $student->email, 
                     'password' => Hash::make($newPassword),
-                ]);
-                
-                $user->assignRole('captain'); 
-
-                $student->updateQuietly(['user_id' => $user->id]);
-
-                $details = [
-                    'name' => $student->name,
-                    'section' => "{$student->semester}/{$student->shift}/{$student->section}",
+                ]
+            );
+            if (!$user->wasRecentlyCreated) {
+                $user->update([
                     'email' => $student->email,
-                    'password' => $newPassword
-                ];
-
-                Mail::to($student->email)->send(new CaptainLoginDetails($details));
+                    'password' => Hash::make($newPassword),
+                ]);
             }
+            $user->assignRole('captain'); 
+            $student->updateQuietly(['user_id' => $user->id]);
+            $details = [
+                'name' => $student->name,
+                'section' => "{$student->semester}/{$student->shift}/{$deptShortName}-{$student->section}",
+                'email' => $student->email,
+                'password' => $newPassword
+            ];
+
+            Mail::to($student->email)->send(new CaptainLoginDetails($details));
         }
     }
     /**

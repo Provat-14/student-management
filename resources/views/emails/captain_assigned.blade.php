@@ -26,7 +26,7 @@
                                 </tr>
                                 <tr>
                                     <td style="color: #4b5563; font-size: 16px; line-height: 24px;">
-                                        We are pleased to inform you that you have been appointed as the <strong>Class Captain</strong> for <strong>Section: {{ $details['section'] }}</strong>. Your leadership and responsibility will play a vital role in our academic management.
+                                        We are pleased to inform you that you have been appointed as the <strong>Class Captain</strong> for <strong>{{ $details['section'] }}</strong>. Your leadership and responsibility will play a vital role in our academic management.
                                     </td>
                                 </tr>
                                 <tr>
