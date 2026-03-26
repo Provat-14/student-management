@@ -18,7 +18,7 @@ class StudentInfolist
 
                 // 🔷 MAIN INFO
                 Section::make('Student Overview')
-                    ->description('Personal & academic snapshot')
+                    ->description('Personal & academic Card')
                     ->icon('heroicon-o-user-circle')
                     ->columns(1)
                     ->schema([
